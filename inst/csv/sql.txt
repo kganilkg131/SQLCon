@@ -1,0 +1,11 @@
+SELECT (LastName + '& ' + FirstName) AS Name FROM Person.Person ORDER BY LastName ASC + FirstName ASC;
+SELECT CONCAT("SQL ", "(Tutorial) ", "is ", "fun!") AS ConcatenatedString;
+"SELECT CONCAT('Comments: ', 9) AS Result;
+SELECT CONCAT('FIRST ', '(SECOND)') from India;"
+SELECT LTRIM('aaaanaconda python pandas', 'a') FROM dual; 
+SELECT CONCAT(
+SELECT SUBSTR('ABCDEFG',3,4) "Substring" FROM DUAL;
+SELECT SUBSTR('ABCDEFG',3,4) ,(LastName + '& ' + FirstName) AS Name "Substring" FROM DUAL;
+SELECT RTRIM(' Five spaces are at the beginning of this string') FROM sys.databases;
+SELECT e.employee_id,e.last_name,e.department_id FROM   employees e,departments d WHERE e.department_id = d.department_id
+SELECT DATEDIFF(dd,a,b) FROM table;

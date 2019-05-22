@@ -1,0 +1,5 @@
+To,Pattern,Replacement
+redshift,GETDATE(),CURRENT_DATE
+redshift,+ '@a',|| '@a'
+redshift,'@a' +,'@a' ||
+redshift,"CONCAT(@a,@b)",@a || @b

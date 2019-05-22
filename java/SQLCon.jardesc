@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="WINDOWS-1252" standalone="no"?>
+<jardesc>
+    <jar path="SQLCon/inst/java/SQLCon.jar"/>
+    <options buildIfNeeded="true" compress="true" descriptionLocation="/SQLCon/java/SQLCon.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+    <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
+    <selectedProjects/>
+    <manifest generateManifest="true" mainClassHandleIdentifier="=SQLCon/java&lt;com.accenture.data.doc.sqlcon{MainClass.java[MainClass" manifestLocation="/WhiteRabbit/jarDesc/WhiteRabbit.MF" manifestVersion="1.0" reuseManifest="false" saveManifest="false" usesManifest="true">
+        <sealing sealJar="false">
+            <packagesToSeal/>
+            <packagesToUnSeal/>
+        </sealing>
+    </manifest>
+    <selectedElements exportClassFiles="true" exportJavaFiles="true" exportOutputFolder="false">
+        <file path="/SQLCon/SQLCon.Rproj"/>
+        <file path="/SQLCon/NEWS.md"/>
+        <file path="/SQLCon/README.md"/>
+        <javaElement handleIdentifier="=SQLCon/java"/>
+        <folder path="/SQLCon/docs"/>
+        <folder path="/SQLCon/target"/>
+        <file path="/SQLCon/NAMESPACE"/>
+        <folder path="/SQLCon/inst"/>
+        <file path="/SQLCon/hs_err_pid531548.log"/>
+        <folder path="/SQLCon/extras"/>
+        <file path="/SQLCon/SQLCon.Rproj"/>
+        <file path="/SQLCon/.travis.yml"/>
+        <file path="/SQLCon/pom.xml"/>
+        <file path="/SQLCon/.Rbuildignore"/>
+        <file path="/SQLCon/deploy.sh"/>
+        <file path="/SQLCon/.project"/>
+        <file path="/SQLCon/.gitignore"/>
+        <file path="/SQLCon/DESCRIPTION"/>
+        <file path="/SQLCon/license_header_stub.txt"/>
+        <folder path="/SQLCon/man"/>
+        <file path="/SQLCon/cran-comments.md"/>
+        <file path="/SQLCon/_pkgdown.yml"/>
+        <file path="/SQLCon/.classpath"/>
+        <file path="/SQLCon/hs_err_pid508372.log"/>
+        <folder path="/SQLCon/vignettes"/>
+        <folder path="/SQLCon/R"/>
+        <file path="/SQLCon/compare_versions"/>
+        <folder path="/SQLCon/tests"/>
+    </selectedElements>
+</jardesc>

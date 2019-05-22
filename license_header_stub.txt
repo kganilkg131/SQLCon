@@ -1,0 +1,18 @@
+# @file {FILE_NAME}
+#
+
+#
+# @author 
+# @author Team
+
+
+/**
+ * @file {FILE_NAME}
+ *
+ * This file is part of SQLCon
+ *
+ * Copyright 2019
+ * 
+
+ */
+ 

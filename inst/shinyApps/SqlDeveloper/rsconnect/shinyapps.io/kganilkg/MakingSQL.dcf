@@ -1,0 +1,12 @@
+name: MakingSQL
+title: MakingSQL
+username:
+account: kganilkg
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 838796
+bundleId: 2102005
+url: https://kganilkg.shinyapps.io/MakingSQL/
+when: 1558543504.51184
+asMultiple: FALSE
+asStatic: FALSE

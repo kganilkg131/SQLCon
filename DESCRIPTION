@@ -1,0 +1,23 @@
+Package: SQLCon
+Type: Package
+Title: Converting SQL Source to Target Dialects
+Version: 0.1
+Date: 2019-03-22
+Authors@R: c(
+  person("Team1", "Team", , "team@team.org", role = c("aut", "cre")),
+  person("A", "B", role = c("aut"))
+  )
+Maintainer: <kganilkg131@gmail.com>
+Description: A SQL Conversion tool to translates sql into different SQL dialects. 
+License: Apache License 2.0
+VignetteBuilder: knitr    
+URL: https://github.com/kganilkg131/SQLCon
+BugReports: https://github.com/kganilkg131/SQLCon/issues
+Imports:
+  rJava,
+Suggests:
+  knitr, 
+  shiny,
+  shinydashboard
+LazyData: false
+RoxygenNote: 6.1.1

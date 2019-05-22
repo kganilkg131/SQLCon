@@ -1,0 +1,307 @@
+# @file RenderSql
+#
+# Copyright 2019 
+#
+# This file is part of SqlCon
+
+
+#' SQLCon
+#'
+#' @docType package
+#' @name SQLCon
+#' @importFrom utils install.packages menu
+NULL
+
+#Sys.setenv(JAVA_HOME='C:\\Your\\Java\\Directory')
+library(rJava)
+
+print("fafaafaassssssssssssssssssf")
+  .onLoad <- function(libname, pkgname) {
+       rJava::.jpackage(pkgname, lib.loc = libname)
+   }
+
+.onLoad("SQLCon", "SQLCon.jar")
+#jinit (classpath = "C:/Accenture/Program/workbench/SQLCon/inst/java/SQLCon.jar")
+
+
+print("hh")
+
+.jinit('.')
+.jaddClassPath('/inst/java/SQLCon.jar')
+
+ 
+
+ print(.jclassPath())
+ 
+#' @title
+#' Render SQL code based on parameterized SQL and parameter values
+#'
+#' @description
+#' \code{render} Renders SQL code based on parameterized SQL and parameter values.
+#'
+#' @details
+#' This function takes parameterized SQL and a list of parameter values and renders the SQL that can
+#' be send to the server. Parameterization syntax: \describe{ \item{@@parameterName}{Parameters are
+#' indicated using a @@ prefix, and are replaced with the actual values provided in the render
+#' call.} \item{\{DEFAULT @@parameterName = parameterValue\}}{Default values for parameters can be
+#' defined using curly and the DEFAULT keyword.} \item{\{if\}?\{then\}:\{else\}}{The if-then-else
+#' pattern is used to turn on or off blocks of SQL code.} }
+#'
+#'
+#' @param sql                         The parameterized SQL
+#' @param warnOnMissingParameters     Should a warning be raised when parameters provided to this function 
+#'                                    do not appear in the parameterized SQL that is being rendered? By default, this is TRUE.
+#' @param ...                         Parameter values
+#' 
+#' @return
+#' A character string containing the rendered SQL.
+#' 
+#' @examples
+#' render("SELECT * FROM @@a;", a = "myTable")
+#' render("SELECT * FROM @@a {@@b}?{WHERE x = 1};", a = "myTable", b = "true")
+#' render("SELECT * FROM @@a {@@b == ''}?{WHERE x = 1}:{ORDER BY x};", a = "myTable", b = "true")
+#' render("SELECT * FROM @@a {@@b != ''}?{WHERE @@b = 1};", a = "myTable", b = "y")
+#' render("SELECT * FROM @@a {1 IN (@@c)}?{WHERE @@b = 1};",
+#'        a = "myTable",
+#'        b = "y",
+#'        c = c(1, 2, 3, 4))
+#' render("{DEFAULT @@b = \"someField\"}SELECT * FROM @@a {@@b != ''}?{WHERE @@b = 1};",
+#'        a = "myTable")
+#' render("SELECT * FROM @@a {@@a == 'myTable' & @@b != 'x'}?{WHERE @@b = 1};",
+#'        a = "myTable",
+#'        b = "y")
+#' render(sql = "SELECT * FROM @@a;", 
+#'        warnOnMissingParameters = FALSE, 
+#'        a = "myTable", 
+#'        b = "missingParameter")
+#' @import rJava
+#' @export
+render <- function(sql = "", warnOnMissingParameters = TRUE, ...) {
+  parameters <- lapply(list(...), function(x) {
+    paste(x, collapse = ",")
+  })
+  print("inside render ")
+  if (warnOnMissingParameters) {
+ 
+    messages <- rJava::J("com.accenture.data.doc.sqlcon.SqlRender")$check(sql, rJava::.jarray(names(parameters)), rJava::.jarray(as.character(parameters)))
+
+    for (message in messages) {
+      warning(message)
+    }
+  }
+  print("afaf  ddsfsfsfdd.........333333333ddddaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+  
+  translatedSql <- rJava::J("com.accenture.data.doc.sqlcon.SqlRender")$renderSql(sql, rJava::.jarray(names(parameters)), rJava::.jarray(as.character(parameters)))
+  print("afaf  ddsfsfsfdd.........333333333ddddaaaaaaaaaaaaaaaa")
+  return(translatedSql)
+}
+
+#' @title
+#' Deprecated: Render SQL code based on parameterized SQL and parameter values
+#'
+#' @description
+#' This function has been deprecated. Use \code{\link{render}} instead. This new 
+#' function returns a character vector instead of a list.
+#'
+#' @param sql                         The parameterized SQL
+#' @param warnOnMissingParameters     Should a warning be raised when parameters provided to this function 
+#'                                    do not appear in the parameterized SQL that is being rendered? By default, this is TRUE.
+#' @param ...                         Parameter values
+#' @return
+#' A list containing the following elements: \describe{ \item{parameterizedSql}{The original
+#' parameterized SQL code} \item{sql}{The rendered sql} }
+#' @import rJava
+#' @export
+renderSql <- function(sql = "", warnOnMissingParameters = TRUE, ...) {
+  
+  print("inside - renderSql ")
+  .Deprecated("render")
+  translatedSql <- render(sql, warnOnMissingParameters, ...)
+  parameters <- lapply(list(...), function(x) {
+    paste(x, collapse = ",")
+  })
+  return(list(originalSql = sql, sql = translatedSql, parameters = parameters))
+}
+
+#' @title
+#' Translates SQL from one dialect to another
+#'
+#' @description
+#' \code{translate} translates SQL from one dialect to another.
+#'
+#' @details
+#' This function takes SQL in one dialect and translates it into another. It uses simple pattern
+#' replacement, so its functionality is limited. Note that trailing semicolons are not removed 
+#' for Oracle, which is required before sending a statement through JDBC. This will be done by 
+#' \code{\link{splitSql}}.
+#'
+#' @param sql                The SQL to be translated
+#' @param targetDialect      The target dialect. Currently "oracle", "postgresql", "pdw", "impala", "netezza", "bigquery", and
+#'                           "redshift" are supported
+#' @param oracleTempSchema   A schema that can be used to create temp tables in when using Oracle or Impala.
+#' @return
+#' A character string containing the translated SQL.
+#' 
+#' @examples
+#' translate("USE my_schema;", targetDialect = "oracle")
+#' 
+#' @export
+translate <- function(sql = "",
+                      targetDialect,
+                      oracleTempSchema = NULL) {
+  print("inside translate ")
+  
+  pathToReplacementPatterns <- system.file("csv", "replacementPatterns.csv", package = "SQLCon")
+  if (missing(oracleTempSchema) || is.null(oracleTempSchema))
+    oracleTempSchema <- rJava::.jnull()
+  messages <- rJava::J("com.accenture.data.doc.sqlcon.SqlTranslate")$check(sql, targetDialect)
+  for (message in messages) {
+    warning(message)
+  }
+  translatedSql <- rJava::J("com.accenture.data.doc.sqlcon.SqlTranslate")$translateSqlWithPath(sql, targetDialect, rJava::.jnull(), oracleTempSchema, pathToReplacementPatterns)
+  return(translatedSql)
+}
+
+#' @title
+#' Deprecated: Translates SQL from one dialect to another
+#'
+#' @description
+#' This function has been deprecated. Use \code{\link{translate}} instead. This new 
+#' function returns a character vector instead of a list.
+#'
+#' @param sql                The SQL to be translated
+#' @param targetDialect      The target dialect. Currently "oracle", "postgresql", "pdw", "impala", "netezza", "bigquery", and
+#'                           "redshift" are supported
+#' @param oracleTempSchema   A schema that can be used to create temp tables in when using Oracle or Impala.
+#' 
+#' @return
+#' A list containing the following elements: \describe{ \item{originalSql}{The original parameterized
+#' SQL code} \item{sql}{The translated SQL} }
+#' 
+#' @export
+translateSql <- function(sql = "",
+                         targetDialect,
+                         oracleTempSchema = NULL) {
+  .Deprecated("translate")
+  translatedSql <- translate(sql, 
+                             targetDialect,
+                             oracleTempSchema = NULL)
+  return(list(originalSql = sql, sql = translatedSql))
+}
+
+#' @title
+#' Translates a single SQL statement from one dialect to another
+#'
+#' @description
+#' \code{translateSingleStatement} translates a single SQL statement from one dialect to another.
+#'
+#' @details
+#' This function takes SQL in one dialect and translates it into another. It uses simple pattern
+#' replacement, so its functionality is limited. This removes any trailing semicolon as required 
+#' by Oracle when sending through JDBC. An error is thrown if more than one statement is encountered 
+#' in the SQL.
+#'
+#' @param sql                The SQL to be translated
+#' @param targetDialect      The target dialect. Currently "oracle", "postgresql", "pdw", "impala", "netezza", "bigquery", and
+#'                           "redshift" are supported
+#' @param oracleTempSchema   A schema that can be used to create temp tables in when using Oracle or Impala.
+#' @return
+#' A character vector with the translated SQL.
+#' @examples
+#' translateSingleStatement("USE my_schema;", targetDialect = "oracle")
+#' 
+#' @export
+translateSingleStatement <- function(sql = "",
+                                     targetDialect,
+                                     oracleTempSchema = NULL) {
+  pathToReplacementPatterns <- system.file("csv", "replacementPatterns.csv", package = "SQLCon")
+  print("Inside - translateSingleStatement ")
+  
+  if (missing(oracleTempSchema) || is.null(oracleTempSchema))
+    oracleTempSchema <- rJava::.jnull()
+  messages <- rJava::J("com.accenture.data.doc.sqlcon.SqlTranslate")$check(sql, targetDialect)
+  for (message in messages) {
+    warning(message)
+  }
+  translatedSql <- rJava::J("com.accenture.data.doc.sqlcon.SqlTranslate")$translateSingleStatementSqlWithPath(sql, 
+                                                                                              targetDialect, 
+                                                                                              rJava::.jnull(), 
+                                                                                              oracleTempSchema, 
+                                                                                              pathToReplacementPatterns)
+  return(translatedSql)
+}
+
+
+#-----------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------
+
+#' @title
+#' Translates SQL from one dialect to another
+#'
+#' @description
+#' \code{translate} translates SQL from one dialect to another.
+#'
+#' @details
+#' This function takes SQL in one dialect and translates it into another. It uses simple pattern
+#' replacement, so its functionality is limited. Note that trailing semicolons are not removed 
+#' for Oracle, which is required before sending a statement through JDBC. This will be done by 
+#' \code{\link{splitSql}}.
+#'
+#' @param sql                The SQL to be translated
+#' @param targetDialect      The target dialect. Currently "oracle", "postgresql", "pdw", "impala", "netezza", "bigquery", and
+#'                           "redshift" are supported
+#' @param oracleTempSchema   A schema that can be used to create temp tables in when using Oracle or Impala.
+#' @return
+#' A character string containing the translated SQL.
+#' 
+#' @examples
+#' translate("USE my_schema;", targetDialect = "oracle")
+#' 
+#' @import rJava
+#' @export
+sqlconvertcall <- function(sql = "",
+                      targetDialect,
+                      oracleTempSchema = NULL) {
+  print("Inside sqlconvertcall ")
+  
+  pathToReplacementPatterns <- system.file("csv", "conversionPatterns.csv", package = "SQLCon")
+  if (missing(oracleTempSchema) || is.null(oracleTempSchema))
+    oracleTempSchema <- rJava::.jnull()
+  
+  
+ messages <- rJava::J("com.accenture.data.doc.sqlcon.SqlTranslate")$check(sql, targetDialect)
+
+  for (message in messages) {
+    warning(message)
+  }
+ print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+
+  translatedSql <- rJava::J("com.accenture.data.doc.sqlcon.SqlConvert")$convertSqlWithPath(sql, targetDialect, "Hive", rJava::.jnull(), oracleTempSchema, pathToReplacementPatterns)
+  print("KKKKK  "+translatedSql)
+   return(translatedSql)
+}
+
+#-----------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------
+
+
+#' @title
+#' Split a single SQL string into one or more SQL statements
+#'
+#' @description
+#' \code{splitSql} splits a string containing multiple SQL statements into a vector of SQL statements
+#'
+#' @details
+#' This function is needed because some DBMSs (like ORACLE) do not accepts multiple SQL statements
+#' being sent as one execution.
+#'
+#' @param sql   The SQL string to split into separate statements
+#' @return
+#' A vector of strings, one for each SQL statement
+#' @examples
+#' splitSql("SELECT * INTO a FROM b; USE x; DROP TABLE c;")
+#'
+#' @export
+splitSql <- function(sql) {
+  rJava::J("com.accenture.data.doc.sqlcon.SqlSplit")$splitSql(sql)
+}
